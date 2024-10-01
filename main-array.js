@@ -1,8 +1,19 @@
-const mainEl = document.querySelector("main");
-const newTodoInput = document.querySelector("#new-todo-input");
-const addTodoBtn = document.querySelector("#add-todo");
+const mainEl = document.querySelector("main"),
+  newTodoInput = document.querySelector("#new-todo-input"),
+  addTodoBtn = document.querySelector("#add-todo");
 
-let todos = [];
+function getLocalStorage() {
+  const parsedStorage = JSON.parse(localStorage.getItem("todos"));
+
+  // return parsedStorage || [];
+  return parsedStorage != null ? parsedStorage : [];
+}
+
+function updateLocalStorage(newTodos) {
+  localStorage.setItem("todos", JSON.stringify(newTodos));
+}
+
+let todos = getLocalStorage();
 // [
 //   {
 //     text: "Todo 1",
@@ -85,6 +96,7 @@ function saveEachTodoFn(id) {
 
   editId = null;
 
+  updateLocalStorage(todos);
   createTodoListView();
 }
 
@@ -95,9 +107,12 @@ function editEachTodoFn(id) {
 }
 
 function deleteEachTodoFn(id) {
+  // [1,2,3,4]
   const newTodosArr = todos.filter((todo) => todo.id != id);
+  // [2,3,4]
   todos = newTodosArr;
 
+  updateLocalStorage(todos);
   createTodoListView();
 }
 
@@ -107,6 +122,8 @@ function checkEachTodoFn(id) {
       todo.completed = !todo.completed;
     }
   });
+
+  updateLocalStorage(todos);
   createTodoListView();
 }
 
@@ -137,6 +154,8 @@ addTodoBtn.addEventListener("click", () => {
     };
 
     todos.push(newTodo);
+
+    updateLocalStorage(todos);
     createTodoListView();
   } else {
     console.log("Please add a text.");
